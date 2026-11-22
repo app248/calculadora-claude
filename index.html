@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1b2a;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    .calculadora {
+      background: #1b2d45;
+      border-radius: 14px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 360px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      color: #e8f0fe;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #7fafd4;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #2e4a6a;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: 'Segoe UI', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      background: #0d1b2a;
+      color: #e8f0fe;
+    }
+
+    input[type="number"]::placeholder {
+      color: #4a6a8a;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: #3d8bcd;
+      background: #122238;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237fafd4' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    select option {
+      background: #0d1b2a;
+      color: #e8f0fe;
+    }
+
+    .fila-resultado {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      margin-top: 4px;
+    }
+
+    .fila-resultado > div {
+      flex: 1;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #2e4a6a;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1b2a;
+      color: #5bc8f5;
+      cursor: default;
+      caret-color: transparent;
+      outline: none;
+      margin-bottom: 0;
+    }
+
+    input[type="text"].error {
+      color: #f5666a;
+    }
+
+    input[type="text"]::placeholder {
+      color: #4a6a8a;
+      font-weight: 400;
+    }
+
+    .btn-limpiar {
+      padding: 10px 16px;
+      background: #1e3a5f;
+      border: 1px solid #2e4a6a;
+      border-radius: 8px;
+      color: #7fafd4;
+      font-size: 13px;
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-limpiar:hover {
+      background: #264d7a;
+      color: #e8f0fe;
+    }
+
+    .separador {
+      border: none;
+      border-top: 1px solid #2e4a6a;
+      margin: 20px 0;
+    }
+
+    .historial-titulo {
+      font-size: 12px;
+      font-weight: 700;
+      color: #7fafd4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+
+    .historial-lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .historial-lista li {
+      background: #0d1b2a;
+      border: 1px solid #2e4a6a;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #c5daf5;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .historial-lista li span.res {
+      color: #5bc8f5;
+      font-weight: 700;
+    }
+
+    .historial-vacio {
+      font-size: 13px;
+      color: #4a6a8a;
+      text-align: center;
+      padding: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculadora">
+    <h1>Calculadora</h1>
+
+    <label for="num1">Primer número</label>
+    <input type="number" id="num1" placeholder="0">
+
+    <label for="num2">Segundo número</label>
+    <input type="number" id="num2" placeholder="0">
+
+    <label for="operacion">Operación</label>
+    <select id="operacion">
+      <option value="">— Elige una operación —</option>
+      <option value="suma">Suma (+)</option>
+      <option value="resta">Resta (−)</option>
+      <option value="multiplicacion">Multiplicación (×)</option>
+      <option value="division">División (÷)</option>
+      <option value="potencia">Potencia (^)</option>
+    </select>
+
+    <hr class="separador">
+
+    <label>Resultado</label>
+    <div class="fila-resultado">
+      <div>
+        <input type="text" id="resultado" readonly placeholder="—">
+      </div>
+      <button class="btn-limpiar" id="btnLimpiar">Limpiar</button>
+    </div>
+
+    <hr class="separador">
+
+    <div class="historial-titulo">Últimas operaciones</div>
+    <ul class="historial-lista" id="historial">
+      <li class="historial-vacio" id="historialVacio">Sin operaciones todavía</li>
+    </ul>
+  </div>
+
+  <script>
+    var num1Input = document.getElementById("num1");
+    var num2Input = document.getElementById("num2");
+    var operacionSelect = document.getElementById("operacion");
+    var resultadoInput = document.getElementById("resultado");
+    var historialLista = document.getElementById("historial");
+    var historialVacio = document.getElementById("historialVacio");
+    var btnLimpiar = document.getElementById("btnLimpiar");
+
+    var historial = [];
+    var ultimoResultado = null;
+
+    var simbolos = {
+      suma: "+",
+      resta: "−",
+      multiplicacion: "×",
+      division: "÷",
+      potencia: "^"
+    };
+
+    function calcular() {
+      var num1 = parseFloat(num1Input.value);
+      var num2 = parseFloat(num2Input.value);
+      var operacion = operacionSelect.value;
+
+      resultadoInput.classList.remove("error");
+
+      if (operacion === "" || num1Input.value === "" || num2Input.value === "") {
+        resultadoInput.value = "";
+        ultimoResultado = null;
+        return;
+      }
+
+      if (isNaN(num1) || isNaN(num2)) {
+        resultadoInput.value = "";
+        ultimoResultado = null;
+        return;
+      }
+
+      var resultado;
+
+      if (operacion === "suma") {
+        resultado = num1 + num2;
+      } else if (operacion === "resta") {
+        resultado = num1 - num2;
+      } else if (operacion === "multiplicacion") {
+        resultado = num1 * num2;
+      } else if (operacion === "division") {
+        if (num2 === 0) {
+          resultadoInput.classList.add("error");
+          resultadoInput.value = "Error: división entre 0";
+          ultimoResultado = null;
+          return;
+        }
+        resultado = num1 / num2;
+      } else if (operacion === "potencia") {
+        resultado = Math.pow(num1, num2);
+      }
+
+      resultado = parseFloat(resultado.toFixed(10));
+      resultadoInput.value = resultado;
+
+      // Guardar en historial si el resultado cambió
+      if (ultimoResultado !== resultado + "" + num1 + num2 + operacion) {
+        ultimoResultado = resultado + "" + num1 + num2 + operacion;
+        var simbolo = simbolos[operacion];
+        agregarHistorial(num1 + " " + simbolo + " " + num2, resultado);
+      }
+    }
+
+    function agregarHistorial(operacionTexto, resultado) {
+      historial.unshift({ op: operacionTexto, res: resultado });
+      if (historial.length > 5) {
+        historial.pop();
+      }
+      renderHistorial();
+    }
+
+    function renderHistorial() {
+      historialLista.innerHTML = "";
+
+      if (historial.length === 0) {
+        var li = document.createElement("li");
+        li.className = "historial-vacio";
+        li.id = "historialVacio";
+        li.textContent = "Sin operaciones todavía";
+        historialLista.appendChild(li);
+        return;
+      }
+
+      for (var i = 0; i < historial.length; i++) {
+        var li = document.createElement("li");
+        var spanOp = document.createElement("span");
+        spanOp.textContent = historial[i].op + " =";
+        var spanRes = document.createElement("span");
+        spanRes.className = "res";
+        spanRes.textContent = historial[i].res;
+        li.appendChild(spanOp);
+        li.appendChild(spanRes);
+        historialLista.appendChild(li);
+      }
+    }
+
+    function limpiar() {
+      num1Input.value = "";
+      num2Input.value = "";
+      operacionSelect.value = "";
+      resultadoInput.value = "";
+      resultadoInput.classList.remove("error");
+      historial = [];
+      ultimoResultado = null;
+      renderHistorial();
+    }
+
+    num1Input.addEventListener("input", calcular);
+    num2Input.addEventListener("input", calcular);
+    operacionSelect.addEventListener("change", calcular);
+    btnLimpiar.addEventListener("click", limpiar);
+  </script>
+</body>
+</html>
